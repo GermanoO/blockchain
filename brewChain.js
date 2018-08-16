@@ -72,6 +72,21 @@ const BrewChain = function() {
 		return chain;
 	}
 
+	function getBrew(id){
+		let myChain
+		console.log("TESTE");
+		
+		chain.forEach(function(data){
+			console.log(data.data);
+			if(data.data == id){
+				console.log("DENTRO DO IF");
+				myChain = data
+				console.log(myChain);
+			}
+		  });
+		return myChain;
+	}
+
 	function replaceChain(newChain){
 		chain = newChain;
 		currentBlock = chain[chain.length-1];
@@ -131,6 +146,7 @@ const BrewChain = function() {
 		getLatestBlock,
 		getTotalBlocks,
 		getChain,
+		getBrew,
 		checkNewChainIsValid,
 		replaceChain
 	};

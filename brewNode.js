@@ -115,6 +115,10 @@ const BrewNode = function(port){
 
     }
 
+    const getBrew = (id) => {
+        let newBlock = chain.getBrew(id)
+    }
+
     const getStats = () => {
         return {
             blocks: chain.getTotalBlocks()
@@ -138,6 +142,7 @@ const BrewNode = function(port){
         broadcastMessage,
         addPeer,
         createBlock,
+        getBrew,
         getStats
     }
 

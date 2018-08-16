@@ -28,6 +28,12 @@ let BrewHTTP = function (){
 		res.send();
 	})
 
+	app.get('/getBrew/:id', (req, res)=>{
+		let newBlock = node1.getBrew(req.params.id);
+		console.log('Brew returned');
+		res.send();
+	})
+
 	app.listen(http_port, () => {
 		console.log(`http server up.. ${http_port}`);
 	})
