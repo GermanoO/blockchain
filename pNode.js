@@ -1,11 +1,11 @@
-const BrewChain = require('./brewChain');
+const PChain = require('./pChain');
 const WebSocket = require('ws');
 
-const BrewNode = function(port){
-    let brewSockets = [];
-    let brewServer;
+const PNode = function(port){
+    let pSockets = [];
+    let pServer;
     let _port = port
-    let chain = new BrewChain();
+    let chain = new PChain();
 
     const REQUEST_CHAIN = "REQUEST_CHAIN";
     const REQUEST_BLOCK = "REQUEST_BLOCK";
@@ -16,10 +16,10 @@ const BrewNode = function(port){
 
         chain.init();
 		
-        brewServer = new WebSocket.Server({ port: _port });
+        pServer = new WebSocket.Server({ port: _port });
 		
-        brewServer.on('connection', (connection) => {
-            console.log('connection in');
+        pServer.on('connection', (connection) => {
+            console.log('conexão em');
             initConnection(connection);
         });		
     }
@@ -42,7 +42,7 @@ const BrewNode = function(port){
                     break;  
 
                 default:  
-                    console.log('Unknown message ');
+                    console.log('Mensagem Desconhecida ');
             }
         });
     }
@@ -53,7 +53,7 @@ const BrewNode = function(port){
 
         if(newChain.length > chain.getTotalBlocks() && chain.checkNewChainIsValid(newChain)){
         	chain.replaceChain(newChain);
-        	console.log('chain replaced');
+        	console.log('chain substituida');
         }
     }
 
@@ -61,22 +61,19 @@ const BrewNode = function(port){
 
         let currentTopBlock = chain.getLatestBlock();
 
-        // Is the same or older?
+        // Verifica se é o mesmo bloco ou o antigo
         if(block.index <= currentTopBlock.index){
-        	console.log('No update needed');
+        	console.log('Nenhum update necessário');
         	return;
         }
 
-        //Is claiming to be the next in the chain
         if(block.previousHash == currentTopBlock.hash){
-        	//Attempt the top block to our chain
         	chain.addToChain(block);
 
-        	console.log('New block added');
+        	console.log('New block adicionado');
         	console.log(chain.getLatestBlock());
         }else{
-        	// It is ahead.. we are therefore a few behind, request the whole chain
-        	console.log('requesting chain');
+        	console.log('solicitando chain');
         	broadcastMessage(REQUEST_CHAIN,"");
         }
     }
@@ -86,37 +83,36 @@ const BrewNode = function(port){
     }
 
     const broadcastMessage = (event, message) => {
-        brewSockets.forEach(node => node.send(JSON.stringify({ event, message})))
+        pSockets.forEach(node => node.send(JSON.stringify({ event, message})))
     }
 
     const closeConnection = (connection) => {
-        console.log('closing connection');
-        brewSockets.splice(brewSockets.indexOf(connection),1);
+        console.log('fechando conexão');
+        pSockets.splice(pSockets.indexOf(connection),1);
     }
 
     const initConnection = (connection) => {
-        console.log('init connection');
+        console.log('iniciando conexão');
 
         messageHandler(connection);
         
         requestLatestBlock(connection);
 
-        brewSockets.push(connection);
+        pSockets.push(connection);
 
         connection.on('error', () => closeConnection(connection));
         connection.on('close', () => closeConnection(connection));
     }
 
-    const createBlock = (teammember) => {
-        let newBlock = chain.createBlock(teammember)
+    const createBlock = (rg, dadosPaciente) => {
+        let newBlock = chain.createBlock(rg, dadosPaciente)
         chain.addToChain(newBlock);
-
 		broadcastMessage(BLOCK, newBlock);
-
     }
 
-    const getBrew = (id) => {
-        let newBlock = chain.getBrew(id)
+    const getBrew = (rg) => {
+        let Block = chain.getBrew(rg)
+        console.log(Block)
     }
 
     const getStats = () => {
@@ -127,16 +123,13 @@ const BrewNode = function(port){
 
     const addPeer = (host, port) => {
         let connection = new WebSocket(`ws://${host}:${port}`);
-
         connection.on('error', (error) =>{
             console.log(error);
         });
-
         connection.on('open', (msg) =>{
             initConnection(connection);
         });
     }
-
     return {
         init,
         broadcastMessage,
@@ -145,7 +138,5 @@ const BrewNode = function(port){
         getBrew,
         getStats
     }
-
 }
-
-module.exports = BrewNode;
+module.exports = PNode;

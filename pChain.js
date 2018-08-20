@@ -1,6 +1,6 @@
 const Crypto = require('crypto');
 
-const BrewChain = function() {
+const PChain = function() {
 	let chain = [];
 	let currentBlock = {};
 	let genesisBlock = {};
@@ -9,47 +9,53 @@ const BrewChain = function() {
 		genesisBlock = { 
             index: 0
 		  , timestamp: 1511818270000
-		  , data: 'our genesis data'
+		  , rg: 'genesis'
+		  , dados: "dados"
 		  , previousHash: "-1"
 		  , nonce: 0
 		};
-
+		
 		genesisBlock.hash = createHash(genesisBlock);
 		chain.push(genesisBlock);
 		currentBlock = genesisBlock; 
 	}
 
-	function createHash({ timestamp, data, index, previousHash, nonce }) {
-		return Crypto.createHash('SHA256').update(timestamp+data+index+previousHash+nonce).digest('hex');
+	function createHash({ timestamp, rg, dados, index, previousHash, nonce }) {
+		return Crypto.createHash('SHA256').update(timestamp+rg+dados+index+previousHash+nonce).digest('hex');
 	}
 
 	function addToChain(block){
-
 		if(checkNewBlockIsValid(block, currentBlock)){
 			chain.push(block);
 			currentBlock = block; 
 			return true;
 		}
-		
 		return false;
 	}
 
-	function createBlock(data){
+	function createBlock(rg, dadosPaciente){
 		let newBlock = {
 		    timestamp: new Date().getTime()
-		  , data: data
+		  , rg: rg
+		  , dados: {
+			  nome: dadosPaciente.nome,
+			  dataNascimento: dadosPaciente.dataNascimento,
+			  endereco: dadosPaciente.endereco,
+			  telefone: dadosPaciente.telefone,
+			  nomeMae: dadosPaciente.nomeMae,
+			  queixa: dadosPaciente.queixa,
+			  medicacoesEmUso: dadosPaciente.medicacoesEmUso,
+			  alergia: dadosPaciente.alergia
+		}
 		  , index: currentBlock.index+1
 		  , previousHash: currentBlock.hash
 		  , nonce: 0
 		};
-
 		newBlock = proofOfWork(newBlock);
-
 		return newBlock;
 	}
 
 	function proofOfWork(block){
-
 		while(true){
 			block.hash = createHash(block);
 			if(block.hash.slice(-3) === "000"){	
@@ -74,14 +80,9 @@ const BrewChain = function() {
 
 	function getBrew(id){
 		let myChain
-		console.log("TESTE");
-		
 		chain.forEach(function(data){
-			console.log(data.data);
-			if(data.data == id){
-				console.log("DENTRO DO IF");
+			if(data.rg == id){
 				myChain = data
-				console.log(myChain);
 			}
 		  });
 		return myChain;
@@ -103,7 +104,6 @@ const BrewChain = function() {
 			//The hash isn't correct
 			return false;
 		}
-		
 		return true;
 	}	
 
@@ -112,17 +112,13 @@ const BrewChain = function() {
 	}
 
 	function checkNewChainIsValid(newChain){
-		//Is the first block the genesis block?
 		if(createHash(newChain[0]) !== genesisBlock.hash ){
 			return false;
 		}
-
 		let previousBlock = newChain[0];
 		let blockIndex = 1;
-
         while(blockIndex < newChain.length){
         	let block = newChain[blockIndex];
-
         	if(block.previousHash !== createHash(previousBlock)){
         		return false;
         	}
@@ -130,11 +126,9 @@ const BrewChain = function() {
         	if(block.hash.slice(-3) !== "000"){	
         		return false;
         	}
-
         	previousBlock = block;
         	blockIndex++;
         }
-
         return true;
 	}
 
@@ -151,5 +145,4 @@ const BrewChain = function() {
 		replaceChain
 	};
 };
-
-module.exports = BrewChain;
+module.exports = PChain;
