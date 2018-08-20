@@ -19,7 +19,7 @@ const PNode = function(port){
         pServer = new WebSocket.Server({ port: _port });
 		
         pServer.on('connection', (connection) => {
-            console.log('conexão em');
+            console.log('conectando...');
             initConnection(connection);
         });		
     }

@@ -16,7 +16,7 @@ let HTTP = function (){
 	app.use(bodyParser.json());
 
 	app.get('/addNode/:port', (req, res)=>{
-		console.log('add host: '+req.params.port)
+		console.log('Adicionando Host: '+req.params.port)
 		node1.addPeer('localhost', req.params.port)
 		res.send();
 	})
