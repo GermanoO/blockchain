@@ -78,7 +78,7 @@ const PChain = function() {
 		return chain;
 	}
 
-	function getBrew(id){
+	function getPaciente(id){
 		let myChain
 		chain.forEach(function(data){
 			if(data.rg == id){
@@ -140,7 +140,7 @@ const PChain = function() {
 		getLatestBlock,
 		getTotalBlocks,
 		getChain,
-		getBrew,
+		getPaciente,
 		checkNewChainIsValid,
 		replaceChain
 	};

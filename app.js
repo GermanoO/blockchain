@@ -29,7 +29,7 @@ let HTTP = function (){
 	})
 
 	app.get('/getPaciente/:rg', (req, res)=>{
-		let newBlock = node1.getBrew(req.params.rg);
+		let newBlock = node1.getPaciente(req.params.rg);
 		console.log('Paciente Retornado');
 		res.send();
 	})

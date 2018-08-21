@@ -110,8 +110,8 @@ const PNode = function(port){
 		broadcastMessage(BLOCK, newBlock);
     }
 
-    const getBrew = (rg) => {
-        let Block = chain.getBrew(rg)
+    const getPaciente = (rg) => {
+        let Block = chain.getPaciente(rg)
         console.log(Block)
     }
 
@@ -135,7 +135,7 @@ const PNode = function(port){
         broadcastMessage,
         addPeer,
         createBlock,
-        getBrew,
+        getPaciente,
         getStats
     }
 }
