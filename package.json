@@ -1,5 +1,5 @@
 {
-  "name": "brewchain",
+  "name": "pchain",
   "version": "1.0.0",
   "description": "NodeJS implementação blockchain",
   "main": "app.js",
